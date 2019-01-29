@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Bill Control</string>
+    <string name="title_home">Bills</string>
+    <string name="title_add">New Bill</string>
+    <string name="title_edit">Edit Bill</string>
+    <string name="title_config">Settings</string>
+
+    <string name="header_bill_item_value">value</string>
+    <string name="header_bill_item_description">description</string>
+    <string name="header_bill_item_date">date</string>
+
+    <string name="bill_description">Description</string>
+    <string name="bill_value">Value</string>
+    <string name="bill_expiration_date">Expiration Date</string>
+    <string name="bill_payment_date">Payment</string>
+
+    <string name="menu_crud_bill_save">Save</string>
+    <string name="expiration_date_not_empty">Expiration date must be not empty</string>
+    <string name="enable_notifications">Enable notifications</string>
+    <string name="days_before_notification">Days before notification</string>
+    <string name="quantity_days">Quantity of days</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="notifications_enabled">Notifications are enabled</string>
+    <string name="notifications_disabled">Notifications are disabled</string>
+
+
+    <string name="days_left">"The bill %s will expire in %d days"</string>
+    <string name="day_left">"The bill %s will expire in %d day"</string>
+
+</resources>

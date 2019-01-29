@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Controle de Contas</string>
+
+    <string name="title_home">Contas</string>
+    <string name="title_add">Nova Conta</string>
+    <string name="title_edit">Editar Conta</string>
+    <string name="title_config">Configurações</string>
+
+    <string name="header_bill_item_value">valor</string>
+    <string name="header_bill_item_description">descrição</string>
+    <string name="header_bill_item_date">data</string>
+
+    <string name="bill_description">Descrição</string>
+    <string name="bill_value">Valor</string>
+    <string name="bill_expiration_date">Data de Vencimento</string>
+    <string name="bill_payment_date">Pagamento</string>
+    <string name="menu_crud_bill_save">Salvar</string>
+    <string name="expiration_date_not_empty">Data de Vencimento não pode ser vazia</string>
+    <string name="enable_notifications">Habilitar Notificações</string>
+    <string name="days_before_notification">Dias antes para notificar</string>
+    <string name="quantity_days">Quantidade de dias</string>
+    <string name="cancel">Cancelar</string>
+    <string name="notifications_enabled">Notificações habilitadas</string>
+    <string name="notifications_disabled">Notificações desabilitadas</string>
+
+    <string name="days_left">"A conta %s vai vencer em %d dias"</string>
+    <string name="day_left">"A conta %s vai vencer em %d dia"</string>
+</resources>

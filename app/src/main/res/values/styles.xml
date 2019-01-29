@@ -1,0 +1,53 @@
+<resources>
+
+
+    <style name="AppTheme" parent="@style/BaseAppTheme">
+    </style>
+
+    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- ACTIONBAR -->
+    <style name="myStyle.ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="titleTextStyle">@style/myStyle.ActionBar.Title</item>
+        <item name="subtitleTextStyle">@style/myStyle.ActionBar.Title</item>
+    </style>
+
+    <style name="myStyle.ActionBar.Title" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/colorPrimaryLight</item>
+    </style>
+
+    <!-- SUBTEMAS -->
+    <style name="AppTheme.NoActionBar.FullScreen" parent="AppTheme.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="TextLabel" parent="Theme.Design">
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">@color/colorPrimaryDark</item>
+        <item name="android:textSize">17sp</item>
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+        <item name="colorControlNormal">@color/colorPrimaryDark</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
+    </style>
+
+    <style name="datepicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+</resources>
