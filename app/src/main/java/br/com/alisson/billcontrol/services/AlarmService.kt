@@ -37,13 +37,13 @@ class AlarmService(private val context: Context) {
         )
 
         val today = Calendar.getInstance()
-        var time = DateUtils.manageDaysCalendar(today.time, DateUtils.ADD, 0)
+        var time = DateUtils.manageDaysCalendar(today.time, DateUtils.ADD)
         val year = time.get(Calendar.YEAR)
         val month = time.get(Calendar.MONTH)
         val day = time.get(Calendar.DAY_OF_MONTH)
 
         time = Calendar.getInstance()
-        time.set(year, month, day, 14, 45, 0)
+        time.set(year, month, day, 7, 0, 0)
 
         Log.i("BillsService","Alarme ativado para: ${time.time}")
         alarmManager.set(AlarmManager.RTC_WAKEUP, time.time.time, this.pendingIntent)
