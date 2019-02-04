@@ -29,7 +29,7 @@ class BillsService : Service(), AlarmBroadcastInterface {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i("BillsService","onStartCommand -> $startId")
 
-        if(this.checkAlarm != null){
+        if(this.checkAlarm == null){
             this.checkAlarm = CheckAlarm(this, this.alarmService)
             this.checkAlarm!!.startSafe()
         }

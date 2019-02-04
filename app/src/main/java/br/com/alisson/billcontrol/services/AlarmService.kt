@@ -37,7 +37,13 @@ class AlarmService(private val context: Context) {
         )
 
         val today = Calendar.getInstance()
-        var time = DateUtils.manageDaysCalendar(today.time, DateUtils.ADD)
+        val hour = today.get(Calendar.HOUR_OF_DAY)
+
+        var time = if (hour < 7)
+            DateUtils.manageDaysCalendar(today.time, DateUtils.ADD, 0)
+        else
+            DateUtils.manageDaysCalendar(today.time, DateUtils.ADD)
+
         val year = time.get(Calendar.YEAR)
         val month = time.get(Calendar.MONTH)
         val day = time.get(Calendar.DAY_OF_MONTH)
