@@ -11,6 +11,7 @@ class PreferencesConfig(context: Context) {
 
         private const val NOTIFICATION_ENABLED = "NOTIFICATION_ENABLED"
         private const val DAYS_BEFORE_NOTIFICATION = "DAYS_BEFORE_NOTIFICATION"
+        private const val ALARM_SELECTED = "ALARM_SELECTED"
     }
 
     private lateinit var sp: SharedPreferences
@@ -37,6 +38,14 @@ class PreferencesConfig(context: Context) {
 
     fun getDaysBeforeNotification():Int{
         return sp.getInt(DAYS_BEFORE_NOTIFICATION, 0)
+    }
+
+    fun getAlarmSelected() = sp.getString(ALARM_SELECTED, "")
+
+    fun setAlarmSelected(alarm: String){
+        val editor = sp.edit()
+        editor.putString(ALARM_SELECTED, alarm)
+        editor.apply()
     }
 
 }

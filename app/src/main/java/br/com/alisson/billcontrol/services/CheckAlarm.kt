@@ -58,7 +58,7 @@ class CheckAlarm(private val context: Context, private val alarmService: AlarmSe
                     alarmService.createAlarm(bills)
                 }
             }
-            Thread.sleep(TimeUnit.HOURS.toMillis(5))
+            Thread.sleep(TimeUnit.HOURS.toMillis(3))
         }
         this.status = STOP
     }

@@ -8,8 +8,10 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.services.broadcasts.AlarmBroadcast
 import br.com.alisson.billcontrol.utils.DateUtils
+import br.com.alisson.billcontrol.utils.Formats
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -50,6 +52,8 @@ class AlarmService(private val context: Context) {
 
         time = Calendar.getInstance()
         time.set(year, month, day, 7, 0, 0)
+
+        PreferencesConfig(context).setAlarmSelected(Formats.SDF_HOURS.format(time.time))
 
         Log.i("BillsService","Alarme ativado para: ${time.time}")
         alarmManager.set(AlarmManager.RTC_WAKEUP, time.time.time, this.pendingIntent)
