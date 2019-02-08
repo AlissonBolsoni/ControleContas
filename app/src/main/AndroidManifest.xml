@@ -16,23 +16,24 @@
             tools:ignore="GoogleAppIndexingWarning">
         <activity
                 android:name=".ui.activity.MainActivity"
-                android:label="@string/app_name">
+                android:label="@string/app_name"
+                android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="br.com.alisson.billcontrol.ui.activity.NOTIFICATION_ACTIVITY" />
+                <action android:name="br.com.alisson.billcontrol.ui.activity.NOTIFICATION_ACTIVITY"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <service android:name=".services.BillsService"/>
 
         <receiver android:name=".services.broadcasts.BootBroadcast">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
     </application>

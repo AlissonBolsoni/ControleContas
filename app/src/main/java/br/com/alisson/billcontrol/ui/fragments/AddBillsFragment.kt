@@ -91,6 +91,8 @@ class AddBillsFragment : BaseFragment() {
             mainActivity!!.moveToFragment(MainActivity.FRAGMENT_HOME)
         }
 
+        mainActivity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+
         return super.onOptionsItemSelected(item)
     }
 
