@@ -54,7 +54,6 @@ class AddBillsFragment : BaseFragment() {
 
             val obBill = bundle.getSerializable(MainActivity.BILL_VALUE) as ObBill
             id = obBill.id
-            //TODO - Fazer a consulta no Firebase para trazer a conta com o Id
             //val obBill = mainActivity!!.getRealmQuery().equalTo("id", id).findFirst()
 
             setFields(obBill)

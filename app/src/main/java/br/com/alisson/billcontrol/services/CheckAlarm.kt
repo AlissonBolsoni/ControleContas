@@ -2,9 +2,14 @@ package br.com.alisson.billcontrol.services
 
 import android.content.Context
 import android.util.Log
+import br.com.alisson.billcontrol.configs.FirebaseConfiguration
 import br.com.alisson.billcontrol.models.ObBill
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
+import br.com.alisson.billcontrol.utils.Consts
 import br.com.alisson.billcontrol.utils.DateUtils
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
@@ -47,9 +52,30 @@ class CheckAlarm(private val context: Context, private val alarmService: AlarmSe
                 val maxCal = DateUtils.manageDaysCalendar(today, DateUtils.ADD, days)
                 val maxDate = maxCal.time
 
+                val bills = ArrayList<ObBill>()
+                val reference = FirebaseConfiguration.getFirebaseDatabase()
+                    .child(Consts.FIREBASE_BILL)
+                    .child(PreferencesConfig(context).getUserAuthId())
 
-                //TODO - Fazer consulta das contas no Firebase
-                val bills = ArrayList<ObBill>() //remover depois de fazer a consulta
+                reference.orderByChild("expirationDate")
+                    .startAt(today.time.toDouble())
+                    .endAt(maxDate.time.toDouble())
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
+
+                        }
+
+                        override fun onDataChange(p0: DataSnapshot) {
+                            bills.clear()
+                            for (data in p0.children) {
+                                val bill = data.getValue(ObBill::class.java)
+                                if (bill != null)
+                                    bills.add(bill)
+
+                            }
+                        }
+                    })
+
 //                val realm = Realm.getDefaultInstance()
 //                val payment: Long? = null
 //                val bills =
