@@ -8,7 +8,6 @@ import br.com.alisson.billcontrol.models.ObBill
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.services.broadcasts.AlarmBroadcast
 import br.com.alisson.billcontrol.services.broadcasts.AlarmBroadcastInterface
-import io.realm.Realm
 
 class BillsService : Service(), AlarmBroadcastInterface {
 
@@ -51,14 +50,8 @@ class BillsService : Service(), AlarmBroadcastInterface {
         return null
     }
 
-    override fun alarmBroadcastCallBack(bills: ArrayList<String>) {
-        val array = arrayOfNulls<String>(bills.size)
-        bills.toArray(array)
-
-        val realm = Realm.getDefaultInstance()
-        val list = realm.where(ObBill::class.java).`in`("id", array).findAll()
-
-        NotificationService(this).notify(list)
+    override fun alarmBroadcastCallBack(bills: ArrayList<ObBill>) {
+        NotificationService(this).notify(bills)
 
     }
 

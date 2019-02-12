@@ -5,9 +5,9 @@ import android.util.Log
 import br.com.alisson.billcontrol.models.ObBill
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.utils.DateUtils
-import io.realm.Realm
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class CheckAlarm(private val context: Context, private val alarmService: AlarmService) : Runnable {
 
@@ -47,11 +47,14 @@ class CheckAlarm(private val context: Context, private val alarmService: AlarmSe
                 val maxCal = DateUtils.manageDaysCalendar(today, DateUtils.ADD, days)
                 val maxDate = maxCal.time
 
-                val realm = Realm.getDefaultInstance()
-                val payment: Long? = null
-                val bills =
-                    realm.where(ObBill::class.java).between("expirationDate", today.time, maxDate.time)
-                        .equalTo("paymentDate", payment).findAll()
+
+                //TODO - Fazer consulta das contas no Firebase
+                val bills = ArrayList<ObBill>() //remover depois de fazer a consulta
+//                val realm = Realm.getDefaultInstance()
+//                val payment: Long? = null
+//                val bills =
+//                    realm.where(ObBill::class.java).between("expirationDate", today.time, maxDate.time)
+//                        .equalTo("paymentDate", payment).findAll()
 
                 Log.i("BillsService", "run -> $bills")
                 if (bills.size > 0) {

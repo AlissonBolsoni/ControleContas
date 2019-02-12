@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import br.com.alisson.billcontrol.R
+import br.com.alisson.billcontrol.configs.FirebaseConfiguration
 import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.ui.activity.MainActivity
+import br.com.alisson.billcontrol.utils.Consts
 import br.com.alisson.billcontrol.utils.Formats
 import br.com.alisson.billcontrol.utils.SetCalendarToView
 import kotlinx.android.synthetic.main.fragment_add_bill_layout.*
@@ -45,16 +48,16 @@ class AddBillsFragment : BaseFragment() {
         val bundle = arguments
         if (bundle == null) {
             title = getString(R.string.title_add)
-        }
-        else {
+        } else {
             title = getString(R.string.title_edit)
             mainActivity!!.setTitleAddButton(getString(R.string.title_edit))
 
-            id = bundle.getString(MainActivity.BILL_ID_VALUE)
-            val obBill = mainActivity!!.getRealmQuery().equalTo("id", id).findFirst()
+            val obBill = bundle.getSerializable(MainActivity.BILL_VALUE) as ObBill
+            id = obBill.id
+            //TODO - Fazer a consulta no Firebase para trazer a conta com o Id
+            //val obBill = mainActivity!!.getRealmQuery().equalTo("id", id).findFirst()
 
-            if (obBill != null)
-                setFields(obBill)
+            setFields(obBill)
         }
         setTitle()
     }
@@ -67,7 +70,7 @@ class AddBillsFragment : BaseFragment() {
 
             val payment = if (obBill.paymentDate == null) "" else Formats.SDF.format(Date(obBill.paymentDate!!))
             frag_add_bill_payment_edit.text = payment
-        }else{
+        } else {
             frag_add_bill_description_edit.setText("")
             frag_add_bill_value_edit.setText("")
             frag_add_bill_expiration_edit.text = ""
@@ -85,9 +88,16 @@ class AddBillsFragment : BaseFragment() {
         if (item.itemId == R.id.menu_crud_bill_save) {
             val obBill = getObBill() ?: return false
 
-            mainActivity!!.getRealm().executeTransaction {
-                it.insertOrUpdate(obBill)
-            }
+            FirebaseConfiguration
+                .getFirebaseDatabase()
+                .child(Consts.FIREBASE_BILL)
+                .child(PreferencesConfig(mainActivity!!).getUserAuthId())
+                .child(obBill.id!!).setValue(obBill)
+
+
+//            mainActivity!!.getRealm().executeTransaction {
+//                it.insertOrUpdate(obBill)
+//            }
             mainActivity!!.moveToFragment(MainActivity.FRAGMENT_HOME)
         }
 

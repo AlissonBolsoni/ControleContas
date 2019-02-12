@@ -12,9 +12,10 @@ class PreferencesConfig(context: Context) {
         private const val NOTIFICATION_ENABLED = "NOTIFICATION_ENABLED"
         private const val DAYS_BEFORE_NOTIFICATION = "DAYS_BEFORE_NOTIFICATION"
         private const val ALARM_SELECTED = "ALARM_SELECTED"
+        private const val USER_ID_AUTH = "USER_ID_AUTH"
     }
 
-    private lateinit var sp: SharedPreferences
+    private var sp: SharedPreferences
 
     init {
         sp = context.getSharedPreferences(SP_NAME, Activity.MODE_PRIVATE)
@@ -48,4 +49,11 @@ class PreferencesConfig(context: Context) {
         editor.apply()
     }
 
+    fun getUserAuthId() = sp.getString(USER_ID_AUTH, "")
+
+    fun setUserAuthId(id: String){
+        val editor = sp.edit()
+        editor.putString(USER_ID_AUTH, id)
+        editor.apply()
+    }
 }

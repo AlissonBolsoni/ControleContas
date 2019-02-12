@@ -4,9 +4,11 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import br.com.alisson.billcontrol.R
 import br.com.alisson.billcontrol.models.ObBill
@@ -66,11 +68,13 @@ class NotificationService(private val context: Context) {
             mBuilder.setContentIntent(pendingIntent)
             mBuilder.setVibrate(longArrayOf(0, 500, 200, 500))
             mBuilder.setSmallIcon(R.drawable.home_currency_usd)
+            val icon = BitmapFactory.decodeResource(context.resources, R.drawable.home_currency_usd)
+            mBuilder.setLargeIcon(icon)
             mBuilder.setContentTitle(title)
             mBuilder.setContentText(message)
             mBuilder.priority = NotificationCompat.PRIORITY_MAX
             mBuilder.setAutoCancel(true)
-            mBuilder.color = context.resources.getColor(R.color.colorPrimaryLight)
+            mBuilder.color = ContextCompat.getColor(context, R.color.colorPrimaryLight)
             mBuilder.setColorized(true)
 
             Log.i("Notificacao", "notitfy")

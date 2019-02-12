@@ -1,22 +1,15 @@
 package br.com.alisson.billcontrol.models
 
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
-import io.realm.annotations.Required
 import java.io.Serializable
 
-open class ObBill: RealmObject() {
+open class ObBill(
+    var id: String?,
+    var description:String?,
+    var expirationDate: Long,
+    var billValue: Float,
+    var paymentDate: Long?): Serializable {
 
-    @Required
-    @PrimaryKey
-    var id: String? = null
+    constructor() : this(null, null, 0L, 0.0F, null)
 
-    @Required
-    var description:String? = null
 
-    var expirationDate: Long = 0L
-
-    var billValue: Float = 0.0F
-
-    var paymentDate: Long? = null
 }

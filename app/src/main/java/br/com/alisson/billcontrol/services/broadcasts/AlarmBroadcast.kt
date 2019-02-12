@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import br.com.alisson.billcontrol.models.ObBill
 
 class AlarmBroadcast(private val callback: AlarmBroadcastInterface) : BroadcastReceiver() {
 
@@ -25,7 +26,7 @@ class AlarmBroadcast(private val callback: AlarmBroadcastInterface) : BroadcastR
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        val bills = intent.getSerializableExtra(PARAM_BILLS) as ArrayList<String>
+        val bills = intent.getSerializableExtra(PARAM_BILLS) as ArrayList<ObBill>
         this.callback.alarmBroadcastCallBack(bills)
     }
 

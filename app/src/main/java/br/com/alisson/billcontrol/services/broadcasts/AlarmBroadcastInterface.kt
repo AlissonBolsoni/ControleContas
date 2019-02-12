@@ -4,6 +4,6 @@ import br.com.alisson.billcontrol.models.ObBill
 
 interface AlarmBroadcastInterface {
 
-    fun alarmBroadcastCallBack(bills: ArrayList<String>)
+    fun alarmBroadcastCallBack(bills: ArrayList<ObBill>)
 
 }

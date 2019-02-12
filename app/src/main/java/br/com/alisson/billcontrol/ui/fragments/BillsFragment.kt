@@ -5,15 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import br.com.alisson.billcontrol.R
+import br.com.alisson.billcontrol.configs.FirebaseConfiguration
 import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.ui.BillAdapter
 import br.com.alisson.billcontrol.ui.activity.MainActivity
+import br.com.alisson.billcontrol.utils.Consts
 import br.com.alisson.billcontrol.utils.DateUtils
 import br.com.alisson.billcontrol.utils.Formats
-import io.realm.RealmResults
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.bill_filter_item.*
 import kotlinx.android.synthetic.main.fragment_bill_layout.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 class BillsFragment : BaseFragment() {
 
@@ -29,6 +35,7 @@ class BillsFragment : BaseFragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         return view
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -50,14 +57,36 @@ class BillsFragment : BaseFragment() {
         val tempCal = cal
         tempCal.set(Calendar.MONTH, cal.get(Calendar.MONTH).plus(1))
         val maxDate = tempCal.time
-        val bills = mainActivity!!.getRealmQuery().between("expirationDate",month.time, maxDate.time).findAll()
-        createAdapter(bills)
+
+        val reference = FirebaseConfiguration.getFirebaseDatabase()
+            .child(Consts.FIREBASE_BILL)
+            .child(PreferencesConfig(mainActivity!!).getUserAuthId())
+
+        reference.orderByChild("expirationDate")
+            .startAt(month.time.toDouble())
+            .endAt(maxDate.time.toDouble())
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    val bills = ArrayList<ObBill>()
+                    for (data in p0.children) {
+                        val bill = data.getValue(ObBill::class.java)
+                        if (bill != null)
+                            bills.add(bill)
+
+                    }
+                    createAdapter(bills)
+                }
+            })
+
     }
 
-    private fun createAdapter(bills: RealmResults<ObBill>?) {
-        if (bills != null){
-            val adapter = BillAdapter(activity!!, bills) {
-                    obBill ->
+    private fun createAdapter(bills: ArrayList<ObBill>?) {
+        if (bills != null) {
+            val adapter = BillAdapter(mainActivity!!, bills) { obBill ->
                 mainActivity!!.moveToFragment(MainActivity.FRAGMENT_ADD, obBill)
             }
 
@@ -71,14 +100,14 @@ class BillsFragment : BaseFragment() {
         bill_filter_date.text = Formats.SDF_MONTH_YEAR.format(month).toUpperCase(Locale.getDefault())
     }
 
-    private fun left(){
+    private fun left() {
         this.cal = DateUtils.manageMonthCalendar(month, DateUtils.MINUS)
 
         setDateToFilter()
         getBillList()
     }
 
-    private fun right(){
+    private fun right() {
         this.cal = DateUtils.manageMonthCalendar(month, DateUtils.ADD)
         setDateToFilter()
         getBillList()

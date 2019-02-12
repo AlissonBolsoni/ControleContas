@@ -9,15 +9,13 @@ import br.com.alisson.billcontrol.models.ObBill
 import br.com.alisson.billcontrol.ui.fragments.AddBillsFragment
 import br.com.alisson.billcontrol.ui.fragments.BillsFragment
 import br.com.alisson.billcontrol.ui.fragments.ConfigFragment
-import io.realm.Realm
-import io.realm.RealmQuery
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val BILL_ID_VALUE = "BILL_ID_VALUE"
+        const val BILL_VALUE = "BILL_VALUE"
         const val FRAGMENT_HOME = R.id.navigation_home
         const val FRAGMENT_ADD = R.id.navigation_add
         const val FRAGMENT_CONFIG = R.id.navigation_config
@@ -25,7 +23,6 @@ class MainActivity : AppCompatActivity() {
         const val ACTION_NOTIFICATION = "br.com.alisson.billcontrol.ui.activity.NOTIFICATION_ACTIVITY"
     }
 
-    private var realm: Realm? = null
     private var obBill: ObBill? = null
 
     private val mOnNavigationItemSelectedListener =
@@ -48,15 +45,6 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
-
-    fun getRealmQuery(): RealmQuery<ObBill> {
-        return getRealm().where(ObBill::class.java)
-    }
-
-    fun getRealm(): Realm {
-        if (this.realm == null) this.realm = Realm.getDefaultInstance()
-        return this.realm!!
-    }
 
     fun moveToFragment(id: Int, obBill: ObBill? = null) {
         this.obBill = obBill
@@ -82,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         if (this.obBill != null) {
             val bundle = Bundle()
-            bundle.putString(BILL_ID_VALUE, this.obBill!!.id)
+            bundle.putSerializable(BILL_VALUE, this.obBill!!)
             fragment.arguments = bundle
         }
 
@@ -104,11 +92,6 @@ class MainActivity : AppCompatActivity() {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         moveToFragment(R.id.navigation_home)
 
-        realm = Realm.getDefaultInstance()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        getRealm().close()
-    }
 }
