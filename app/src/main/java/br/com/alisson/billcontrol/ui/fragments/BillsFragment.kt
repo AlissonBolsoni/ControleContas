@@ -18,6 +18,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.bill_filter_item.*
 import kotlinx.android.synthetic.main.fragment_bill_layout.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -25,6 +27,7 @@ class BillsFragment : BaseFragment() {
 
     private lateinit var month: Date
     private lateinit var cal: Calendar
+    private val eventBus: EventBus = EventBus.getDefault()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_bill_layout, container, false)
@@ -39,9 +42,21 @@ class BillsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        eventBus.register(this)
+
         configFilter()
 
         getBillList()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        eventBus.unregister(this)
+    }
+
+    @Subscribe
+    fun putOnList(bills: ArrayList<ObBill>){
+        createAdapter(bills)
     }
 
     private fun configFilter() {
