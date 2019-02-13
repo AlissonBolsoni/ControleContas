@@ -6,10 +6,9 @@ import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import br.com.alisson.billcontrol.models.ObBill
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
-import br.com.alisson.billcontrol.services.broadcasts.AlarmBroadcast
+import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
 import br.com.alisson.billcontrol.utils.DateUtils
 import br.com.alisson.billcontrol.utils.Formats
 import java.util.*
@@ -28,8 +27,8 @@ class AlarmService(private val context: Context) {
         for (bill in bills)
             list.add(bill.id.toString())
 
-        val it = Intent(AlarmBroadcast.ACTION)
-        it.putExtra(AlarmBroadcast.PARAM_BILLS, list)
+        val it = Intent(BillBroadcast.ACTION_ALARM)
+        it.putExtra(BillBroadcast.PARAM_BILLS, list)
 
         this.pendingIntent = PendingIntent.getBroadcast(
             this.context,

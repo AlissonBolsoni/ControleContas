@@ -8,6 +8,8 @@ import br.com.alisson.billcontrol.R
 import br.com.alisson.billcontrol.configs.FirebaseConfiguration
 import br.com.alisson.billcontrol.models.ObBill
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
+import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
+import br.com.alisson.billcontrol.services.broadcasts.BroadcastInterfaceCallback
 import br.com.alisson.billcontrol.ui.BillAdapter
 import br.com.alisson.billcontrol.ui.activity.MainActivity
 import br.com.alisson.billcontrol.utils.Consts
@@ -23,11 +25,11 @@ import org.greenrobot.eventbus.Subscribe
 import java.util.*
 import kotlin.collections.ArrayList
 
-class BillsFragment : BaseFragment() {
+class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
 
     private lateinit var month: Date
     private lateinit var cal: Calendar
-    private val eventBus: EventBus = EventBus.getDefault()
+    private lateinit var broadcast: BillBroadcast
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_bill_layout, container, false)
@@ -41,22 +43,28 @@ class BillsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        eventBus.register(this)
-
+        broadcast = BillBroadcast.register(mainActivity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
         configFilter()
-
         getBillList()
     }
 
     override fun onStop() {
+        BillBroadcast.unregister(mainActivity!!, broadcast)
         super.onStop()
-        eventBus.unregister(this)
     }
 
-    @Subscribe
-    fun putOnList(bills: ArrayList<ObBill>){
-        createAdapter(bills)
+    override fun putOnList(bills: ArrayList<ObBill>) {
+        val temp = ArrayList<ObBill>()
+        for (bill in bills) {
+            if (bill.expirationDate >= month.time && bill.expirationDate <= DateUtils.manageMonthCalendar(
+                    month,
+                    DateUtils.ADD
+                ).time.time
+            ) {
+                temp.add(bill)
+            }
+        }
+        createAdapter(temp)
     }
 
     private fun configFilter() {

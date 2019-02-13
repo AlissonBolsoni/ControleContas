@@ -73,22 +73,13 @@ class CheckAlarm(private val context: Context, private val alarmService: AlarmSe
                                 val bill = data.getValue(ObBill::class.java)
                                 if (bill != null)
                                     bills.add(bill)
-
                             }
                         }
                     })
 
-//                val realm = Realm.getDefaultInstance()
-//                val payment: Long? = null
-//                val bills =
-//                    realm.where(ObBill::class.java).between("expirationDate", today.time, maxDate.time)
-//                        .equalTo("paymentDate", payment).findAll()
-
                 Log.i("BillsService", "run -> $bills")
                 if (bills.size > 0) {
                     alarmService.createAlarm(bills)
-                    val eventBus = EventBus.getDefault()
-                    eventBus.post(BillsEvent(bills))
                 }
             }
             Thread.sleep(TimeUnit.HOURS.toMillis(3))

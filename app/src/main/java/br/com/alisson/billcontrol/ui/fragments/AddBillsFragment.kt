@@ -92,11 +92,11 @@ class AddBillsFragment : BaseFragment() {
                 .child(Consts.FIREBASE_BILL)
                 .child(PreferencesConfig(mainActivity!!).getUserAuthId())
                 .child(obBill.id!!).setValue(obBill)
-
-
 //            mainActivity!!.getRealm().executeTransaction {
 //                it.insertOrUpdate(obBill)
 //            }
+
+            mainActivity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             mainActivity!!.moveToFragment(MainActivity.FRAGMENT_HOME)
         }
 
