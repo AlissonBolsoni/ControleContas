@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import br.com.alisson.billcontrol.R
 import br.com.alisson.billcontrol.models.ObBill
 import br.com.alisson.billcontrol.ui.fragments.AddBillsFragment
 import br.com.alisson.billcontrol.ui.fragments.BillsFragment
 import br.com.alisson.billcontrol.ui.fragments.ConfigFragment
+import br.com.alisson.billcontrol.utils.MoneyUtil
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.main_toolbar.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -51,8 +54,15 @@ class MainActivity : AppCompatActivity() {
         navigation.selectedItemId = id
     }
 
-    fun setTitle(textTitle: String) {
-        title = textTitle
+    fun setTitle(textTitle: String, value: Float? = null) {
+        tool_title.text = textTitle
+        
+        if (value == null)
+            tool_total.visibility = View.GONE
+        else{
+            tool_total.text = MoneyUtil.formatBR(value)
+            tool_total.visibility = View.VISIBLE
+        }
     }
 
     fun setTitleAddButton(text: String) {
@@ -91,6 +101,8 @@ class MainActivity : AppCompatActivity() {
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         moveToFragment(R.id.navigation_home)
+
+        setSupportActionBar(main_toolbar)
 
     }
 

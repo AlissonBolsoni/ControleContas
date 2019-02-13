@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:id="@+id/main_toolbar">
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tool_contraint">
+
+        <TextView
+                android:id="@+id/tool_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@+id/tool_contraint"
+                app:layout_constraintEnd_toEndOf="@+id/tool_contraint"
+                app:layout_constraintTop_toTopOf="@+id/tool_contraint"
+                app:layout_constraintBottom_toBottomOf="@id/tool_contraint"
+                app:layout_constraintHorizontal_bias="0"
+                android:textColor="@color/icons"
+                android:textSize="18sp"/>
+
+        <TextView
+                android:id="@+id/tool_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@+id/tool_contraint"
+                app:layout_constraintEnd_toEndOf="@+id/tool_contraint"
+                app:layout_constraintTop_toTopOf="@+id/tool_contraint"
+                app:layout_constraintBottom_toBottomOf="@id/tool_contraint"
+                app:layout_constraintHorizontal_bias="0.9"
+                android:textColor="@color/icons"
+                android:textSize="22sp"/>
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.Toolbar>

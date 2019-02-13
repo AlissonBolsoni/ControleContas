@@ -18,8 +18,8 @@ open class BaseFragment: Fragment() {
         mainActivity = activity as MainActivity
     }
 
-    fun setTitle(){
-        mainActivity!!.setTitle(title)
+    fun setTitle(value: Float? = null){
+        mainActivity!!.setTitle(title, value)
     }
 
 }

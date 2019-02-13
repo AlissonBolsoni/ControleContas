@@ -31,4 +31,12 @@ object DateUtils {
         tempCal.add(Calendar.DAY_OF_MONTH, qnt)
         return tempCal
     }
+
+    fun getCacheKey(time: Long): String{
+        val tempCal = Calendar.getInstance()
+        tempCal.time = Date(time)
+        val mm = tempCal.get(Calendar.MONTH)
+        val yer = tempCal.get(Calendar.YEAR)
+        return "$yer$mm"
+    }
 }

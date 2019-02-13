@@ -51,8 +51,7 @@ class BillBroadcast private constructor(private val callback: BroadcastInterface
             }
 
             ACTION_DATABASE_CHANGE ->{
-                val bills = intent.getSerializableExtra(PARAM_BILLS) as ArrayList<ObBill>
-                this.callback.putOnList(bills)
+                this.callback.putOnList()
             }
 
         }

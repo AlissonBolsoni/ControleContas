@@ -6,6 +6,6 @@ interface BroadcastInterfaceCallback {
 
     fun alarmBroadcastCallBack(bills: ArrayList<ObBill>){}
 
-    fun putOnList(bills: ArrayList<ObBill>){}
+    fun putOnList(){}
 
 }

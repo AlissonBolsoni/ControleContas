@@ -38,30 +38,6 @@ class BillsService : Service(), BroadcastInterfaceCallback {
             this.checkAlarm!!.startSafe()
         }
 
-        val bills = ArrayList<ObBill>()
-        val reference = FirebaseConfiguration.getFirebaseDatabase()
-            .child(Consts.FIREBASE_BILL)
-            .child(PreferencesConfig(this).getUserAuthId())
-
-        reference
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
-
-                }
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    bills.clear()
-                    for (data in p0.children) {
-                        val bill = data.getValue(ObBill::class.java)
-                        if (bill != null)
-                            bills.add(bill)
-                    }
-
-                    BillBroadcast.notify(this@BillsService, BillBroadcast.ACTION_DATABASE_CHANGE, BillBroadcast.PARAM_BILLS, bills)
-
-                }
-            })
-
         return START_STICKY
     }
 

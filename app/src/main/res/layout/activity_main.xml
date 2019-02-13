@@ -7,6 +7,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+    <android.support.design.widget.AppBarLayout
+            android:id="@+id/main_include_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+        <include layout="@layout/main_toolbar"/>
+
+    </android.support.design.widget.AppBarLayout>
+
     <android.support.design.widget.BottomNavigationView
             android:id="@+id/navigation"
             android:layout_width="0dp"
@@ -24,10 +37,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/main_frame_layout"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/navigation"/>
+            app:layout_constraintBottom_toTopOf="@+id/navigation"
+            app:layout_constraintTop_toBottomOf="@+id/main_include_toolbar"/>
 
 </android.support.constraint.ConstraintLayout>

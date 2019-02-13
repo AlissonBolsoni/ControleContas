@@ -3,7 +3,6 @@ package br.com.alisson.billcontrol.services
 import android.content.Context
 import android.util.Log
 import br.com.alisson.billcontrol.configs.FirebaseConfiguration
-import br.com.alisson.billcontrol.configs.events.BillsEvent
 import br.com.alisson.billcontrol.models.ObBill
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.utils.Consts
@@ -11,7 +10,6 @@ import br.com.alisson.billcontrol.utils.DateUtils
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import org.greenrobot.eventbus.EventBus
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList

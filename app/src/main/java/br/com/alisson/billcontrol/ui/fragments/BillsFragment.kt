@@ -12,6 +12,7 @@ import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
 import br.com.alisson.billcontrol.services.broadcasts.BroadcastInterfaceCallback
 import br.com.alisson.billcontrol.ui.BillAdapter
 import br.com.alisson.billcontrol.ui.activity.MainActivity
+import br.com.alisson.billcontrol.utils.CacheObBils
 import br.com.alisson.billcontrol.utils.Consts
 import br.com.alisson.billcontrol.utils.DateUtils
 import br.com.alisson.billcontrol.utils.Formats
@@ -35,7 +36,6 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         val view = inflater.inflate(R.layout.fragment_bill_layout, container, false)
 
         title = getString(R.string.title_home)
-        setTitle()
 
         super.onCreateView(inflater, container, savedInstanceState)
         return view
@@ -45,7 +45,7 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         super.onViewCreated(view, savedInstanceState)
         broadcast = BillBroadcast.register(mainActivity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
         configFilter()
-        getBillList()
+        putOnList()
     }
 
     override fun onStop() {
@@ -53,18 +53,11 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         super.onStop()
     }
 
-    override fun putOnList(bills: ArrayList<ObBill>) {
-        val temp = ArrayList<ObBill>()
-        for (bill in bills) {
-            if (bill.expirationDate >= month.time && bill.expirationDate <= DateUtils.manageMonthCalendar(
-                    month,
-                    DateUtils.ADD
-                ).time.time
-            ) {
-                temp.add(bill)
-            }
-        }
-        createAdapter(temp)
+    override fun putOnList() {
+        val key = DateUtils.getCacheKey(month.time)
+        val pair = CacheObBils.get(key)
+        setTitle(pair.second)
+        createAdapter(pair.first)
     }
 
     private fun configFilter() {
@@ -74,37 +67,6 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         bill_filter_left.setOnClickListener { left() }
         bill_filter_right.setOnClickListener { right() }
         setDateToFilter()
-    }
-
-    private fun getBillList() {
-        val tempCal = cal
-        tempCal.set(Calendar.MONTH, cal.get(Calendar.MONTH).plus(1))
-        val maxDate = tempCal.time
-
-        val reference = FirebaseConfiguration.getFirebaseDatabase()
-            .child(Consts.FIREBASE_BILL)
-            .child(PreferencesConfig(mainActivity!!).getUserAuthId())
-
-        reference.orderByChild("expirationDate")
-            .startAt(month.time.toDouble())
-            .endAt(maxDate.time.toDouble())
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {
-
-                }
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    val bills = ArrayList<ObBill>()
-                    for (data in p0.children) {
-                        val bill = data.getValue(ObBill::class.java)
-                        if (bill != null)
-                            bills.add(bill)
-
-                    }
-                    createAdapter(bills)
-                }
-            })
-
     }
 
     private fun createAdapter(bills: ArrayList<ObBill>?) {
@@ -127,12 +89,12 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         this.cal = DateUtils.manageMonthCalendar(month, DateUtils.MINUS)
 
         setDateToFilter()
-        getBillList()
+        putOnList()
     }
 
     private fun right() {
         this.cal = DateUtils.manageMonthCalendar(month, DateUtils.ADD)
         setDateToFilter()
-        getBillList()
+        putOnList()
     }
 }
