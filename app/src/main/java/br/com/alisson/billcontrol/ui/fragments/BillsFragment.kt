@@ -2,9 +2,11 @@ package br.com.alisson.billcontrol.ui.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.Toast
 import br.com.alisson.billcontrol.R
@@ -26,11 +28,12 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
     private lateinit var month: Date
     private lateinit var cal: Calendar
     private lateinit var broadcast: BillBroadcast
+    private lateinit var adapter: BillAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_bill_layout, container, false)
-        registerForContextMenu(view)
+
         title = getString(R.string.title_home)
         return view
     }
@@ -38,7 +41,7 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         broadcast = BillBroadcast.register(mainActivity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
-
+        registerForContextMenu(frag_bill_recycler)
         configFilter()
         putOnList()
     }
@@ -66,30 +69,19 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
 
     private fun createAdapter(bills: ArrayList<ObBill>?) {
         if (bills != null) {
-            val adapter = BillAdapter(mainActivity!!, bills, { obBill ->
-                mainActivity!!.moveToFragment(MainActivity.FRAGMENT_ADD, obBill)
-            },{ obBill ->
-                var dialog: AlertDialog? = null
-                val view = layoutInflater.inflate(R.layout.dialog_bill, null)
-                view.findViewById<Button>(R.id.dialog_copy).setOnClickListener {
+            adapter = BillAdapter(mainActivity!!, bills) { obBill, opt ->
+                if (opt == BillAdapter.CLICK)
+                    mainActivity!!.moveToFragment(MainActivity.FRAGMENT_ADD, obBill)
+                else if (opt == BillAdapter.COPY){
                     val nextMont = DateUtils.manageMonthSameDayCalendar(Date(obBill.expirationDate), DateUtils.ADD)
                     obBill.expirationDate = nextMont.time.time
                     obBill.paymentDate = null
                     obBill.id = UUID.randomUUID().toString()
                     FirebaseDao.insert(mainActivity!!, obBill)
-                    dialog!!.dismiss()
                 }
-
-                view.findViewById<Button>(R.id.dialog_delete).setOnClickListener {
+                else if (opt == BillAdapter.DELETE)
                     FirebaseDao.delete(mainActivity!!, obBill)
-                    dialog!!.dismiss()
-                }
-
-                val builder = AlertDialog.Builder(mainActivity!!)
-                builder.setView(view)
-                dialog = builder.create()
-                dialog.show()
-            })
+            }
 
             frag_bill_recycler!!.adapter = adapter
             registerForContextMenu(frag_bill_recycler)
@@ -114,4 +106,6 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         setDateToFilter()
         putOnList()
     }
+
+
 }

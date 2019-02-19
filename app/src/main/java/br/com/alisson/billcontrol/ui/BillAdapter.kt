@@ -2,13 +2,17 @@ package br.com.alisson.billcontrol.ui
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
 import br.com.alisson.billcontrol.R
+import br.com.alisson.billcontrol.data.dao.FirebaseDao
 import br.com.alisson.billcontrol.data.models.ObBill
+import br.com.alisson.billcontrol.utils.DateUtils
 import br.com.alisson.billcontrol.utils.Formats
 import br.com.alisson.billcontrol.utils.MoneyUtil
 import java.util.*
@@ -17,23 +21,50 @@ import java.util.*
 class BillAdapter(
     private val context: Context,
     private val bills: List<ObBill>,
-    private val onClickItem: (ObBill) -> Unit,
-    private val onLongClickItem: (ObBill) -> Unit
+    private val onClickItem: (ObBill, Int) -> Unit
 ) : RecyclerView.Adapter<BillAdapter.ItemHolder>() {
 
-    class ItemHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView){
+    companion object {
+        const val CLICK = 10
+        const val COPY = 20
+        const val DELETE = 30
+    }
+
+    class ItemHolder(itemView: View, private val adapter: BillAdapter) :
+        RecyclerView.ViewHolder(itemView),
+        View.OnCreateContextMenuListener {
+
+        init {
+            itemView.setOnCreateContextMenuListener(this)
+        }
 
         val description: TextView = itemView.findViewById(R.id.frag_bill_item_description)
         val date: TextView = itemView.findViewById(R.id.frag_bill_item_date)
         val billValue: TextView = itemView.findViewById(R.id.frag_bill_item_value)
         val payed: ImageView = itemView.findViewById(R.id.frag_bill_item_payed)
-    }
 
+        override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+            if (v != null){
+                val obBill = v.tag as ObBill
+
+                val copy = menu!!.add(adapter.context.getString(R.string.copy_next_month))
+                copy.setOnMenuItemClickListener {
+                    adapter.onClickItem(obBill, BillAdapter.COPY)
+                    false
+                }
+
+                val del = menu.add(adapter.context.getString(R.string.delete))
+                del.setOnMenuItemClickListener {
+                    adapter.onClickItem(obBill, BillAdapter.DELETE)
+                    false
+                }
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ItemHolder(
-            LayoutInflater.from(context).inflate(R.layout.fragment_bill_item_layout, parent, false)
+            LayoutInflater.from(context).inflate(R.layout.fragment_bill_item_layout, parent, false), this
         )
 
     override fun getItemCount() = bills.size
@@ -48,13 +79,10 @@ class BillAdapter(
             holder.itemView.tag = this
 
             holder.itemView.setOnClickListener {
-                onClickItem(it.tag as ObBill)
-            }
-            holder.itemView.setOnLongClickListener {
-                onLongClickItem(it.tag as ObBill)
-                false
+                onClickItem(it.tag as ObBill, CLICK)
             }
         }
+
 
     }
 
