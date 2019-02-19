@@ -7,5 +7,6 @@
     <dimen name="frag_bill_item_vertical_padding">10dp</dimen>
     <dimen name="frag_bill_item_header_size">13sp</dimen>
     <dimen name="frag_bill_item_size">14sp</dimen>
+    <dimen name="frag_bill_item_value_size">20sp</dimen>
     <dimen name="config_text">18sp</dimen>
 </resources>

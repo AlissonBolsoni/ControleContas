@@ -17,20 +17,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
-    <include
-            android:id="@+id/frag_bill_header"
-            layout="@layout/fragment_bill_item_layout_header"
-            android:layout_width="0dp" android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/frag_bill_filter"
-            app:layout_constraintEnd_toEndOf="@+id/frag_bill_filter"
-            app:layout_constraintStart_toStartOf="parent"/>
+    <!--<include-->
+            <!--android:id="@+id/frag_bill_header"-->
+            <!--layout="@layout/fragment_bill_item_layout_header"-->
+            <!--android:layout_width="0dp" android:layout_height="wrap_content"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/frag_bill_filter"-->
+            <!--app:layout_constraintEnd_toEndOf="@+id/frag_bill_filter"-->
+            <!--app:layout_constraintStart_toStartOf="parent"/>-->
 
     <android.support.v7.widget.RecyclerView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:id="@+id/frag_bill_recycler"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@+id/frag_bill_header"
+            app:layout_constraintTop_toBottomOf="@+id/frag_bill_filter"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
