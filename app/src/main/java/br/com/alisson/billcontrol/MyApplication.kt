@@ -3,7 +3,7 @@ package br.com.alisson.billcontrol
 import android.app.Application
 import android.widget.Toast
 import br.com.alisson.billcontrol.configs.FirebaseConfiguration
-import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.data.models.ObBill
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
 import br.com.alisson.billcontrol.utils.CacheObBils
@@ -36,11 +36,13 @@ class MyApplication:Application() {
 
         val auth = FirebaseConfiguration.getFirebaseAuth()
 
-        if (auth.currentUser == null) {
-            createUserOnFirebase(auth, email, pass)
-        } else {
-            connectToFirebase(auth, email, pass)
-        }
+        connectToFirebase(auth, email, pass)
+
+//        if (auth.currentUser == null) {
+//            createUserOnFirebase(auth, email, pass)
+//        } else {
+//            connectToFirebase(auth, email, pass)
+//        }
     }
 
     private fun createUserOnFirebase(
@@ -90,8 +92,8 @@ class MyApplication:Application() {
                     msg = "Não foi possível conectar o usuário"
                     e.printStackTrace()
                 }
-
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                createUserOnFirebase(auth, email, pass)
             }
         }
     }

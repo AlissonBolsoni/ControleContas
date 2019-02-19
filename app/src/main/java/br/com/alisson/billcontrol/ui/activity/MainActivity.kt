@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import br.com.alisson.billcontrol.R
-import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.data.models.ObBill
 import br.com.alisson.billcontrol.ui.fragments.AddBillsFragment
 import br.com.alisson.billcontrol.ui.fragments.BillsFragment
 import br.com.alisson.billcontrol.ui.fragments.ConfigFragment
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 FRAGMENT_ADD-> {
-                    showFragment(AddBillsFragment(), false)
+                    showFragment(AddBillsFragment(), true)
                     return@OnNavigationItemSelectedListener true
                 }
                 FRAGMENT_HOME -> {

@@ -3,7 +3,7 @@ package br.com.alisson.billcontrol.services
 import android.content.Context
 import android.util.Log
 import br.com.alisson.billcontrol.configs.FirebaseConfiguration
-import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.data.models.ObBill
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.utils.Consts
 import br.com.alisson.billcontrol.utils.DateUtils

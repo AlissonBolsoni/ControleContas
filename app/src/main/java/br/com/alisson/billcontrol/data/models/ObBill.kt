@@ -1,4 +1,4 @@
-package br.com.alisson.billcontrol.models
+package br.com.alisson.billcontrol.data.models
 
 import java.io.Serializable
 

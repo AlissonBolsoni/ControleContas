@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.support.v4.content.LocalBroadcastManager
-import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.data.models.ObBill
 
 class BillBroadcast private constructor(private val callback: BroadcastInterfaceCallback) : BroadcastReceiver() {
 

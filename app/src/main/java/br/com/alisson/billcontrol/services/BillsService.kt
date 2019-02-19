@@ -4,15 +4,10 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import br.com.alisson.billcontrol.configs.FirebaseConfiguration
-import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.data.models.ObBill
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
 import br.com.alisson.billcontrol.services.broadcasts.BroadcastInterfaceCallback
-import br.com.alisson.billcontrol.utils.Consts
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 
 class BillsService : Service(), BroadcastInterfaceCallback {
 

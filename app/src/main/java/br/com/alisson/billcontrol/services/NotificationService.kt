@@ -11,10 +11,9 @@ import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import br.com.alisson.billcontrol.R
-import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.data.models.ObBill
 import br.com.alisson.billcontrol.ui.activity.MainActivity
 import br.com.alisson.billcontrol.utils.NotificationUtils
-import java.lang.Exception
 import java.util.*
 
 class NotificationService(private val context: Context) {

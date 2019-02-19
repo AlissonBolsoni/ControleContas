@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import br.com.alisson.billcontrol.R
-import br.com.alisson.billcontrol.configs.FirebaseConfiguration
-import br.com.alisson.billcontrol.models.ObBill
-import br.com.alisson.billcontrol.preferences.PreferencesConfig
+import br.com.alisson.billcontrol.data.dao.FirebaseDao
+import br.com.alisson.billcontrol.data.models.ObBill
 import br.com.alisson.billcontrol.ui.activity.MainActivity
-import br.com.alisson.billcontrol.utils.Consts
 import br.com.alisson.billcontrol.utils.Formats
 import br.com.alisson.billcontrol.utils.SetCalendarToView
 import kotlinx.android.synthetic.main.fragment_add_bill_layout.*
@@ -87,11 +85,7 @@ class AddBillsFragment : BaseFragment() {
         if (item.itemId == R.id.menu_crud_bill_save) {
             val obBill = getObBill() ?: return false
 
-            FirebaseConfiguration
-                .getFirebaseDatabase()
-                .child(Consts.FIREBASE_BILL)
-                .child(PreferencesConfig(mainActivity!!).getUserAuthId())
-                .child(obBill.id!!).setValue(obBill)
+            FirebaseDao.insert(mainActivity!!, obBill)
 //            mainActivity!!.getRealm().executeTransaction {
 //                it.insertOrUpdate(obBill)
 //            }

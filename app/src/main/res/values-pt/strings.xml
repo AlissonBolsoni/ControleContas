@@ -25,4 +25,6 @@
 
     <string name="days_left">"A conta %s vai vencer em %d dias"</string>
     <string name="day_left">"A conta %s vai vencer em %d dia"</string>
+    <string name="copy_next_month">Copiar proximo mês</string>
+    <string name="delete">Deletar</string>
 </resources>

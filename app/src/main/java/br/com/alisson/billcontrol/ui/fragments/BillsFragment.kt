@@ -1,30 +1,25 @@
 package br.com.alisson.billcontrol.ui.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
 import br.com.alisson.billcontrol.R
-import br.com.alisson.billcontrol.configs.FirebaseConfiguration
-import br.com.alisson.billcontrol.models.ObBill
-import br.com.alisson.billcontrol.preferences.PreferencesConfig
+import br.com.alisson.billcontrol.data.dao.FirebaseDao
+import br.com.alisson.billcontrol.data.models.ObBill
 import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
 import br.com.alisson.billcontrol.services.broadcasts.BroadcastInterfaceCallback
 import br.com.alisson.billcontrol.ui.BillAdapter
 import br.com.alisson.billcontrol.ui.activity.MainActivity
 import br.com.alisson.billcontrol.utils.CacheObBils
-import br.com.alisson.billcontrol.utils.Consts
 import br.com.alisson.billcontrol.utils.DateUtils
 import br.com.alisson.billcontrol.utils.Formats
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.bill_filter_item.*
 import kotlinx.android.synthetic.main.fragment_bill_layout.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
 import java.util.*
-import kotlin.collections.ArrayList
 
 class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
 
@@ -33,17 +28,17 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
     private lateinit var broadcast: BillBroadcast
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_bill_layout, container, false)
-
-        title = getString(R.string.title_home)
-
         super.onCreateView(inflater, container, savedInstanceState)
+        val view = inflater.inflate(R.layout.fragment_bill_layout, container, false)
+        registerForContextMenu(view)
+        title = getString(R.string.title_home)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         broadcast = BillBroadcast.register(mainActivity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
+
         configFilter()
         putOnList()
     }
@@ -71,11 +66,33 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
 
     private fun createAdapter(bills: ArrayList<ObBill>?) {
         if (bills != null) {
-            val adapter = BillAdapter(mainActivity!!, bills) { obBill ->
+            val adapter = BillAdapter(mainActivity!!, bills, { obBill ->
                 mainActivity!!.moveToFragment(MainActivity.FRAGMENT_ADD, obBill)
-            }
+            },{ obBill ->
+                var dialog: AlertDialog? = null
+                val view = layoutInflater.inflate(R.layout.dialog_bill, null)
+                view.findViewById<Button>(R.id.dialog_copy).setOnClickListener {
+                    val nextMont = DateUtils.manageMonthSameDayCalendar(Date(obBill.expirationDate), DateUtils.ADD)
+                    obBill.expirationDate = nextMont.time.time
+                    obBill.paymentDate = null
+                    obBill.id = UUID.randomUUID().toString()
+                    FirebaseDao.insert(mainActivity!!, obBill)
+                    dialog!!.dismiss()
+                }
+
+                view.findViewById<Button>(R.id.dialog_delete).setOnClickListener {
+                    FirebaseDao.delete(mainActivity!!, obBill)
+                    dialog!!.dismiss()
+                }
+
+                val builder = AlertDialog.Builder(mainActivity!!)
+                builder.setView(view)
+                dialog = builder.create()
+                dialog.show()
+            })
 
             frag_bill_recycler!!.adapter = adapter
+            registerForContextMenu(frag_bill_recycler)
             frag_bill_recycler!!.adapter!!.notifyDataSetChanged()
         }
     }

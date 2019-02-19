@@ -19,8 +19,22 @@ object DateUtils {
         return tempCal
     }
 
-    fun manageDaysCalendar(month: Date, type: Int, days: Int = 1): Calendar {
+    fun manageMonthSameDayCalendar(month: Date, type: Int, days: Int = 1): Calendar {
         val qnt = days * type
+        val tempCal = Calendar.getInstance()
+        tempCal.time = month
+        val mm = tempCal.get(Calendar.MONTH)
+        val yer = tempCal.get(Calendar.YEAR)
+        val day = tempCal.get(Calendar.DAY_OF_MONTH)
+
+        tempCal.set(yer, mm, day, 0, 0, 0)
+        tempCal.add(Calendar.MONTH, qnt)
+        val asda = tempCal.time
+        return tempCal
+    }
+
+    fun manageDaysCalendar(month: Date, type: Int, value: Int = 1): Calendar {
+        val qnt = value * type
         val tempCal = Calendar.getInstance()
         tempCal.time = month
         val mm = tempCal.get(Calendar.MONTH)

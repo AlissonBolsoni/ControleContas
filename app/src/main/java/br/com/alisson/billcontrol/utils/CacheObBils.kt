@@ -1,6 +1,6 @@
 package br.com.alisson.billcontrol.utils
 
-import br.com.alisson.billcontrol.models.ObBill
+import br.com.alisson.billcontrol.data.models.ObBill
 
 object CacheObBils {
 
