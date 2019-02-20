@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 FRAGMENT_CONFIG -> {
                     this.obBill = null
-                    showFragment(ConfigFragment(), false)
+                    showFragment(ConfigFragment(), true)
                     return@OnNavigationItemSelectedListener true
                 }
             }
