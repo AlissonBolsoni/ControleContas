@@ -1,16 +1,18 @@
 package br.com.alisson.billcontrol.ui.activity
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import br.com.alisson.billcontrol.R
 import br.com.alisson.billcontrol.data.tasks.GetBillsAsync
-import br.com.alisson.billcontrol.eventbus.EventLoad
+import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
+import br.com.alisson.billcontrol.services.broadcasts.BroadcastInterfaceCallback
 import com.bumptech.glide.Glide
-import de.greenrobot.event.EventBus
 import kotlinx.android.synthetic.main.activity_splash.*
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity(), BroadcastInterfaceCallback {
+
+    private lateinit var broadcast: BillBroadcast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,16 +23,16 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        EventBus.getDefault().register(this)
+        broadcast = BillBroadcast.register(this, this, BillBroadcast.ACTION_DATABASE_CHANGE)
         GetBillsAsync().execute()
     }
 
     override fun onPause() {
         super.onPause()
-        EventBus.getDefault().unregister(this)
+        BillBroadcast.unregister(this, broadcast)
     }
 
-    open fun onEvent(eventLoad: EventLoad){
+    override fun downloadFinished() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

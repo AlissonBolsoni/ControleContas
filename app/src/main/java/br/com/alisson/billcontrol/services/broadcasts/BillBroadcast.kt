@@ -51,7 +51,7 @@ class BillBroadcast private constructor(private val callback: BroadcastInterface
             }
 
             ACTION_DATABASE_CHANGE ->{
-                this.callback.putOnList()
+                this.callback.downloadFinished()
             }
 
         }

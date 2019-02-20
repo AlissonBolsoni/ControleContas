@@ -1,14 +1,9 @@
 package br.com.alisson.billcontrol.ui.fragments
 
-import android.app.AlertDialog
 import android.os.Bundle
-import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.Button
-import android.widget.Toast
 import br.com.alisson.billcontrol.R
 import br.com.alisson.billcontrol.data.dao.FirebaseDao
 import br.com.alisson.billcontrol.data.models.ObBill
@@ -43,7 +38,7 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         broadcast = BillBroadcast.register(mainActivity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
         registerForContextMenu(frag_bill_recycler)
         configFilter()
-        putOnList()
+        downloadFinished()
     }
 
     override fun onStop() {
@@ -51,7 +46,7 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         super.onStop()
     }
 
-    override fun putOnList() {
+    override fun downloadFinished() {
         val key = DateUtils.getCacheKey(month.time)
         val pair = CacheObBils.get(key)
         setTitle(pair.second)
@@ -98,13 +93,13 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         this.cal = DateUtils.manageMonthCalendar(month, DateUtils.MINUS)
 
         setDateToFilter()
-        putOnList()
+        downloadFinished()
     }
 
     private fun right() {
         this.cal = DateUtils.manageMonthCalendar(month, DateUtils.ADD)
         setDateToFilter()
-        putOnList()
+        downloadFinished()
     }
 
 

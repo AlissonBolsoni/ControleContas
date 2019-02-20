@@ -4,7 +4,6 @@ import android.app.Application
 import android.widget.Toast
 import br.com.alisson.billcontrol.configs.FirebaseConfiguration
 import br.com.alisson.billcontrol.data.models.ObBill
-import br.com.alisson.billcontrol.eventbus.EventLoad
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
 import br.com.alisson.billcontrol.utils.CacheObBils
@@ -15,7 +14,6 @@ import com.google.firebase.auth.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import de.greenrobot.event.EventBus
 
 class MyApplication : Application() {
 
@@ -113,7 +111,7 @@ class MyApplication : Application() {
         reference
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-
+                    BillBroadcast.notify(this@MyApplication, BillBroadcast.ACTION_DATABASE_CHANGE, null, null)
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {

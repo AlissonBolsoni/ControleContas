@@ -29,7 +29,6 @@ object DateUtils {
 
         tempCal.set(yer, mm, day, 0, 0, 0)
         tempCal.add(Calendar.MONTH, qnt)
-        val asda = tempCal.time
         return tempCal
     }
 
