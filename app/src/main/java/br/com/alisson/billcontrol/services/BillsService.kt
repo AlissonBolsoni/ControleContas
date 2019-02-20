@@ -54,4 +54,7 @@ class BillsService : Service(), BroadcastInterfaceCallback {
         NotificationService(this).notify(bills)
     }
 
+
+
+
 }

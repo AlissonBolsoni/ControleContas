@@ -4,6 +4,7 @@ import android.app.Application
 import android.widget.Toast
 import br.com.alisson.billcontrol.configs.FirebaseConfiguration
 import br.com.alisson.billcontrol.data.models.ObBill
+import br.com.alisson.billcontrol.eventbus.EventLoad
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
 import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
 import br.com.alisson.billcontrol.utils.CacheObBils
@@ -14,19 +15,25 @@ import com.google.firebase.auth.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import de.greenrobot.event.EventBus
 
-class MyApplication:Application() {
+class MyApplication : Application() {
+
+    companion object {
+        lateinit var singleton: MyApplication
+    }
 
     override fun onCreate() {
         super.onCreate()
+
+        singleton = this
 
         val sp = PreferencesConfig(this)
         if (sp.isEnableNotification())
             ServiceUtils.startService(this)
 
         loginOrConnectFirebase()
-
-        getBillOnFirebase()
+//        getBillOnFirebase()
 
     }
 
@@ -35,7 +42,6 @@ class MyApplication:Application() {
         val email = "billcontrol@app.com"
 
         val auth = FirebaseConfiguration.getFirebaseAuth()
-
         connectToFirebase(auth, email, pass)
 
 //        if (auth.currentUser == null) {
@@ -98,7 +104,7 @@ class MyApplication:Application() {
         }
     }
 
-    private fun getBillOnFirebase(){
+    fun getBillOnFirebase() {
         val bills = ArrayList<ObBill>()
         val reference = FirebaseConfiguration.getFirebaseDatabase()
             .child(Consts.FIREBASE_BILL)
@@ -123,6 +129,6 @@ class MyApplication:Application() {
                     BillBroadcast.notify(this@MyApplication, BillBroadcast.ACTION_DATABASE_CHANGE, null, null)
                 }
             })
-    }
 
+    }
 }
