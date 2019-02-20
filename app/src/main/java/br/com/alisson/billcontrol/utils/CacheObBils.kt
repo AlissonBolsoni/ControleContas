@@ -30,8 +30,14 @@ object CacheObBils {
         }
     }
 
-    fun get(key: String): Pair<ArrayList<ObBill>, Float> {
-        cacheMap ?: return Pair(ArrayList(), 0F)
-        return cacheMap!![key] ?: return Pair(ArrayList(), 0F)
+    fun get(key: String): ArrayList<ObBill> {
+        cacheMap ?: return ArrayList()
+        return cacheMap!![key]?.first ?: return ArrayList()
+    }
+
+    fun getKeys() = ArrayList(cacheMap!!.keys)
+
+    fun getValue(key: String): Float {
+        return cacheMap!![key]!!.second
     }
 }

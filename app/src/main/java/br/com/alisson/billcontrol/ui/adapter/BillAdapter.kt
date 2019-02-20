@@ -1,4 +1,4 @@
-package br.com.alisson.billcontrol.ui
+package br.com.alisson.billcontrol.ui.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,13 +6,10 @@ import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
 import br.com.alisson.billcontrol.R
-import br.com.alisson.billcontrol.data.dao.FirebaseDao
 import br.com.alisson.billcontrol.data.models.ObBill
-import br.com.alisson.billcontrol.utils.DateUtils
 import br.com.alisson.billcontrol.utils.Formats
 import br.com.alisson.billcontrol.utils.MoneyUtil
 import java.util.*
@@ -28,6 +25,7 @@ class BillAdapter(
         const val CLICK = 10
         const val COPY = 20
         const val DELETE = 30
+        const val MOVE = 40
     }
 
     class ItemHolder(itemView: View, private val adapter: BillAdapter) :
@@ -49,13 +47,19 @@ class BillAdapter(
 
                 val copy = menu!!.add(adapter.context.getString(R.string.copy_next_month))
                 copy.setOnMenuItemClickListener {
-                    adapter.onClickItem(obBill, BillAdapter.COPY)
+                    adapter.onClickItem(obBill, COPY)
+                    false
+                }
+
+                val move = menu.add(adapter.context.getString(R.string.move_next_month))
+                move.setOnMenuItemClickListener {
+                    adapter.onClickItem(obBill, MOVE)
                     false
                 }
 
                 val del = menu.add(adapter.context.getString(R.string.delete))
                 del.setOnMenuItemClickListener {
-                    adapter.onClickItem(obBill, BillAdapter.DELETE)
+                    adapter.onClickItem(obBill, DELETE)
                     false
                 }
             }

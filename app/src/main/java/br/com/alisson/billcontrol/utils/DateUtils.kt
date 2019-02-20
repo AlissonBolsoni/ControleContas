@@ -1,5 +1,6 @@
 package br.com.alisson.billcontrol.utils
 
+import android.widget.TextView
 import java.util.*
 
 object DateUtils {
@@ -51,5 +52,15 @@ object DateUtils {
         val mm = tempCal.get(Calendar.MONTH)
         val yer = tempCal.get(Calendar.YEAR)
         return "$yer$mm"
+    }
+
+    fun getMonthByKey(key: String, textMonth: TextView) {
+        val year = key.substring(0,4)
+        val mn = key.substring(4, key.length)
+
+        val tempCal = Calendar.getInstance()
+        tempCal.set(year.toInt(), mn.toInt(), 1, 0, 0, 0)
+
+        textMonth.text = Formats.SDF_MONTH_YEAR.format(tempCal.time).toUpperCase(Locale.getDefault())
     }
 }

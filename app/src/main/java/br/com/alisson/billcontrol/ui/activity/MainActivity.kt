@@ -8,6 +8,7 @@ import android.view.View
 import br.com.alisson.billcontrol.R
 import br.com.alisson.billcontrol.data.models.ObBill
 import br.com.alisson.billcontrol.ui.fragments.AddBillsFragment
+import br.com.alisson.billcontrol.ui.fragments.BillMasterFragment
 import br.com.alisson.billcontrol.ui.fragments.BillsFragment
 import br.com.alisson.billcontrol.ui.fragments.ConfigFragment
 import br.com.alisson.billcontrol.utils.MoneyUtil
@@ -32,17 +33,17 @@ class MainActivity : AppCompatActivity() {
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 FRAGMENT_ADD-> {
-                    showFragment(AddBillsFragment(), true)
+                    showFragment(AddBillsFragment(), false)
                     return@OnNavigationItemSelectedListener true
                 }
                 FRAGMENT_HOME -> {
                     this.obBill = null
-                    showFragment(BillsFragment(), false)
+                    showFragment(BillMasterFragment(), false)
                     return@OnNavigationItemSelectedListener true
                 }
                 FRAGMENT_CONFIG -> {
                     this.obBill = null
-                    showFragment(ConfigFragment(), true)
+                    showFragment(ConfigFragment(), false)
                     return@OnNavigationItemSelectedListener true
                 }
             }
@@ -103,6 +104,10 @@ class MainActivity : AppCompatActivity() {
         moveToFragment(R.id.navigation_home)
 
         setSupportActionBar(main_toolbar)
+
+    }
+
+    override fun onBackPressed() {
 
     }
 

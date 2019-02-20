@@ -9,21 +9,33 @@ import br.com.alisson.billcontrol.data.dao.FirebaseDao
 import br.com.alisson.billcontrol.data.models.ObBill
 import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
 import br.com.alisson.billcontrol.services.broadcasts.BroadcastInterfaceCallback
-import br.com.alisson.billcontrol.ui.BillAdapter
 import br.com.alisson.billcontrol.ui.activity.MainActivity
+import br.com.alisson.billcontrol.ui.adapter.BillAdapter
 import br.com.alisson.billcontrol.utils.CacheObBils
 import br.com.alisson.billcontrol.utils.DateUtils
-import br.com.alisson.billcontrol.utils.Formats
 import kotlinx.android.synthetic.main.bill_filter_item.*
 import kotlinx.android.synthetic.main.fragment_bill_layout.*
 import java.util.*
 
 class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
 
+    companion object {
+        private const val PARAM_KEY = "PARAM_KEY"
+
+        fun build(key: String): BillsFragment{
+            val bundle = Bundle()
+            bundle.putString(PARAM_KEY, key)
+            val frag = BillsFragment()
+            frag.arguments = bundle
+            return frag
+        }
+    }
+
     private lateinit var month: Date
     private lateinit var cal: Calendar
     private lateinit var broadcast: BillBroadcast
     private lateinit var adapter: BillAdapter
+    private lateinit var key: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -37,8 +49,15 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         super.onViewCreated(view, savedInstanceState)
         broadcast = BillBroadcast.register(mainActivity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
         registerForContextMenu(frag_bill_recycler)
-        configFilter()
+
+        key = arguments!!.getString(PARAM_KEY)?:""
+        setMonthName()
+
         downloadFinished()
+    }
+
+    private fun setMonthName() {
+        DateUtils.getMonthByKey(key, bill_filter_date)
     }
 
     override fun onStop() {
@@ -47,19 +66,8 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
     }
 
     override fun downloadFinished() {
-        val key = DateUtils.getCacheKey(month.time)
-        val pair = CacheObBils.get(key)
-        setTitle(pair.second)
-        createAdapter(pair.first)
-    }
-
-    private fun configFilter() {
-        cal = Calendar.getInstance()
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1, 0, 0, 0)
-
-        bill_filter_left.setOnClickListener { left() }
-        bill_filter_right.setOnClickListener { right() }
-        setDateToFilter()
+        val list = CacheObBils.get(key)
+        createAdapter(list)
     }
 
     private fun createAdapter(bills: ArrayList<ObBill>?) {
@@ -74,6 +82,11 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
                     obBill.id = UUID.randomUUID().toString()
                     FirebaseDao.insert(mainActivity!!, obBill)
                 }
+                else if (opt == BillAdapter.MOVE){
+                    val nextMont = DateUtils.manageMonthSameDayCalendar(Date(obBill.expirationDate), DateUtils.ADD)
+                    obBill.expirationDate = nextMont.time.time
+                    FirebaseDao.insert(mainActivity!!, obBill)
+                }
                 else if (opt == BillAdapter.DELETE)
                     FirebaseDao.delete(mainActivity!!, obBill)
             }
@@ -82,24 +95,6 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
             registerForContextMenu(frag_bill_recycler)
             frag_bill_recycler!!.adapter!!.notifyDataSetChanged()
         }
-    }
-
-    private fun setDateToFilter() {
-        month = cal.time
-        bill_filter_date.text = Formats.SDF_MONTH_YEAR.format(month).toUpperCase(Locale.getDefault())
-    }
-
-    private fun left() {
-        this.cal = DateUtils.manageMonthCalendar(month, DateUtils.MINUS)
-
-        setDateToFilter()
-        downloadFinished()
-    }
-
-    private fun right() {
-        this.cal = DateUtils.manageMonthCalendar(month, DateUtils.ADD)
-        setDateToFilter()
-        downloadFinished()
     }
 
 

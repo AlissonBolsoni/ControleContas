@@ -5,45 +5,22 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:padding="8dp">
 
-    <ImageView
-            android:id="@+id/bill_filter_left"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/chevron_left"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:focusable="true"/>
     <TextView
             tools:text="99/99/9999"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/bill_filter_date"
             android:gravity="center_vertical|center_horizontal"
-            app:layout_constraintStart_toEndOf="@+id/bill_filter_left"
-            app:layout_constraintTop_toTopOf="@+id/bill_filter_left"
-            app:layout_constraintBottom_toBottomOf="@+id/bill_filter_left"
-            app:layout_constraintEnd_toStartOf="@+id/bill_filter_right"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp"
             android:textSize="@dimen/frag_bill_item_header_size"
             android:textColor="@color/colorPrimaryLight"/>
 
-    <ImageView
-            android:id="@+id/bill_filter_right"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/chevron_right"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/bill_filter_left"
-            app:layout_constraintBottom_toBottomOf="@+id/bill_filter_left"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginEnd="8dp"/>
 
 </android.support.constraint.ConstraintLayout>

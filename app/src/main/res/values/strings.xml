@@ -29,5 +29,6 @@
     <string name="day_left">"The bill %s will expire in %d day"</string>
     <string name="copy_next_month">Copy to next month</string>
     <string name="delete">Delete</string>
+    <string name="move_next_month">Move to next month</string>
 
 </resources>
