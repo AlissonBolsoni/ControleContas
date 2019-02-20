@@ -8,41 +8,71 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import br.com.alisson.billcontrol.R
+import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
+import br.com.alisson.billcontrol.services.broadcasts.BroadcastInterfaceCallback
 import br.com.alisson.billcontrol.ui.activity.MainActivity
 import br.com.alisson.billcontrol.ui.adapter.BillPageAdapter
 import br.com.alisson.billcontrol.utils.CacheObBils
+import br.com.alisson.billcontrol.utils.DateUtils
+import java.util.*
 
-class BillMasterFragment : Fragment() {
+class BillMasterFragment : Fragment(), BroadcastInterfaceCallback {
+
+    private lateinit var broadcast: BillBroadcast
+    private lateinit var adapter: BillPageAdapter
+    private lateinit var pageAdapter: ViewPager
+    private var masterKey: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val view = inflater.inflate(R.layout.fragment_bill_master, container, false)
 
-        val pageAdater = view.findViewById<ViewPager>(R.id.master_viewpager)
-        val adapter = BillPageAdapter(CacheObBils.getKeys(), childFragmentManager)
-        pageAdater.adapter = adapter
-        pageAdater.addOnPageChangeListener(object: ViewPager.OnPageChangeListener{
-            override fun onPageScrollStateChanged(p0: Int) {}
-
-            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
-                if (p0 == p2){
-                    setTitle(adapter, p0)
-                }
-            }
-
-            override fun onPageSelected(p0: Int) = setTitle(adapter, p0)
-        })
-
+        pageAdapter = view.findViewById(R.id.master_viewpager)
         return view
     }
 
-    private fun setTitle(adapter: BillPageAdapter, p0: Int) {
-        val key = adapter.list[p0]
-        (activity as MainActivity).setTitle(getString(R.string.title_home), CacheObBils.getValue(key))
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val cal = DateUtils.manageMonthCalendar((Calendar.getInstance()).time, DateUtils.ADD, 0)
+        masterKey = DateUtils.getCacheKey(cal.time.time)
+        downloadFinished()
+
+        broadcast = BillBroadcast.register(activity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
     }
 
+    private fun setTitle() {
+        (activity as MainActivity).setTitle(getString(R.string.title_home), CacheObBils.getValue(masterKey!!))
+    }
 
+    override fun onStop() {
+        BillBroadcast.unregister(context!!, broadcast)
+        super.onStop()
+    }
+
+    override fun downloadFinished() {
+        adapter = BillPageAdapter(CacheObBils.getKeys(), childFragmentManager)
+        pageAdapter.adapter = adapter
+
+        if (masterKey != null)
+            pageAdapter.currentItem = adapter.list.indexOf(masterKey!!)
+
+        pageAdapter.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(p0: Int) {}
+
+            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+                if (p0 == p2) {
+                    masterKey = adapter.list[p0]
+                    setTitle()
+                }
+            }
+
+            override fun onPageSelected(p0: Int) {
+                masterKey = adapter.list[p0]
+                setTitle()
+            }
+        })
+    }
 }

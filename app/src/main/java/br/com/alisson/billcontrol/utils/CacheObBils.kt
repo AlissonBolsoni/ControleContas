@@ -35,7 +35,13 @@ object CacheObBils {
         return cacheMap!![key]?.first ?: return ArrayList()
     }
 
-    fun getKeys() = ArrayList(cacheMap!!.keys)
+    fun getKeys(): ArrayList<String>{
+        val list = ArrayList(cacheMap!!.keys)
+        list.sortBy {
+            it
+        }
+        return list
+    }
 
     fun getValue(key: String): Float {
         return cacheMap!![key]!!.second

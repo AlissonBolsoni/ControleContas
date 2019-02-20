@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.bill_filter_item.*
 import kotlinx.android.synthetic.main.fragment_bill_layout.*
 import java.util.*
 
-class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
+class BillsFragment : BaseFragment() {
 
     companion object {
         private const val PARAM_KEY = "PARAM_KEY"
@@ -31,9 +31,6 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         }
     }
 
-    private lateinit var month: Date
-    private lateinit var cal: Calendar
-    private lateinit var broadcast: BillBroadcast
     private lateinit var adapter: BillAdapter
     private lateinit var key: String
 
@@ -47,7 +44,6 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        broadcast = BillBroadcast.register(mainActivity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
         registerForContextMenu(frag_bill_recycler)
 
         key = arguments!!.getString(PARAM_KEY)?:""
@@ -60,12 +56,7 @@ class BillsFragment : BaseFragment(), BroadcastInterfaceCallback {
         DateUtils.getMonthByKey(key, bill_filter_date)
     }
 
-    override fun onStop() {
-        BillBroadcast.unregister(mainActivity!!, broadcast)
-        super.onStop()
-    }
-
-    override fun downloadFinished() {
+    private fun downloadFinished() {
         val list = CacheObBils.get(key)
         createAdapter(list)
     }
