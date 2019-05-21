@@ -39,12 +39,6 @@ class ConfigFragment: BaseFragment(), SharedPreferences.OnSharedPreferenceChange
         allowNotification.isChecked = this.sp.isEnableNotification()
         allowNotification.setOnCheckedChangeListener { _, checked ->
             sp.saveNotificationSharedPreferences(checked)
-            val intentService = Intent(activity, BillsService::class.java)
-            if (checked)
-                ServiceUtils.startService(context!!)
-            else
-                activity!!.stopService(intentService)
-
             setDays()
         }
         val preferences = PreferenceManager.getDefaultSharedPreferences(context!!)

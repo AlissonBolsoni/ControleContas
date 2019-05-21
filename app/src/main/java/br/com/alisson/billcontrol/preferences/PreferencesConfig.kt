@@ -3,6 +3,7 @@ package br.com.alisson.billcontrol.preferences
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import br.com.alisson.billcontrol.MyApplication
 
 class PreferencesConfig(context: Context) {
 
@@ -13,6 +14,8 @@ class PreferencesConfig(context: Context) {
         private const val DAYS_BEFORE_NOTIFICATION = "DAYS_BEFORE_NOTIFICATION"
         private const val ALARM_SELECTED = "ALARM_SELECTED"
         private const val USER_ID_AUTH = "USER_ID_AUTH"
+        private const val USER_EMAIL = "USER_EMAIL"
+        private const val USER_PASSWORD = "USER_PASSWORD"
     }
 
     private var sp: SharedPreferences
@@ -55,5 +58,30 @@ class PreferencesConfig(context: Context) {
         val editor = sp.edit()
         editor.putString(USER_ID_AUTH, id)
         editor.apply()
+    }
+
+    fun getUserEmail() = sp.getString(USER_EMAIL, "")
+
+    fun setUserEmail(email: String){
+        val editor = sp.edit()
+        editor.putString(USER_EMAIL, email)
+        editor.apply()
+    }
+
+    fun getUserPassword() = sp.getString(USER_PASSWORD, "")
+
+    fun setUserPassword(password: String){
+        val editor = sp.edit()
+        editor.putString(USER_PASSWORD, password)
+        editor.apply()
+    }
+
+    fun getUserIsAlreadyConnected(): Pair<String, String>? {
+        val userEmail = getUserEmail()
+        val userPassword = getUserPassword()
+        if (!userEmail.isNullOrEmpty() && !userPassword.isNullOrEmpty())
+            return Pair(userEmail, userPassword)
+
+        return null
     }
 }

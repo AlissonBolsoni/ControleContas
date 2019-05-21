@@ -44,6 +44,6 @@ object CacheObBils {
     }
 
     fun getValue(key: String): Float {
-        return cacheMap!![key]!!.second
+        return cacheMap!![key]?.second?:0F
     }
 }

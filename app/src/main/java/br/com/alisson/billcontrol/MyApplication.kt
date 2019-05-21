@@ -1,15 +1,28 @@
 package br.com.alisson.billcontrol
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.Application
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.os.Build
+import android.os.Handler
+import android.os.PowerManager
+import android.support.v4.content.ContextCompat
 import android.widget.Toast
 import br.com.alisson.billcontrol.configs.FirebaseConfiguration
+import br.com.alisson.billcontrol.data.dao.FirebaseDao
 import br.com.alisson.billcontrol.data.models.ObBill
+import br.com.alisson.billcontrol.data.models.ObUser
+import br.com.alisson.billcontrol.data.models.toDto
 import br.com.alisson.billcontrol.preferences.PreferencesConfig
+import br.com.alisson.billcontrol.services.BillsService
 import br.com.alisson.billcontrol.services.broadcasts.BillBroadcast
-import br.com.alisson.billcontrol.utils.CacheObBils
-import br.com.alisson.billcontrol.utils.Consts
-import br.com.alisson.billcontrol.utils.MD5
-import br.com.alisson.billcontrol.utils.ServiceUtils
+import br.com.alisson.billcontrol.utils.*
 import com.google.firebase.auth.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,46 +31,124 @@ import com.google.firebase.database.ValueEventListener
 class MyApplication : Application() {
 
     companion object {
+        const val TAG = "MyApplication"
+
+        @SuppressLint("StaticFieldLeak")
+        @Volatile
+        var appContext: Context? = null
+
+        @Volatile
+        lateinit var applicationHandler: Handler
+
+        private lateinit var connectivityManager: ConnectivityManager
+
+        @Volatile
+        private var applicationInitiated = false
+
+        @Volatile
+        var isConnected = false
+
+        @Volatile
+        var serviceOn = false
+
+        fun startMessageService() {
+            try {
+                ContextCompat.startForegroundService(appContext!!, Intent(appContext!!, BillsService::class.java))
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    appContext?.startService(Intent(appContext, BillsService::class.java))
+                }
+
+            } catch (ignore: Throwable) {
+            }
+        }
+
+        fun checkConnection() {
+            isConnected = connectivityManager.activeNetworkInfo != null
+        }
+
+        fun postInitApplication() {
+            if (applicationInitiated) {
+                return
+            }
+            applicationInitiated = true
+
+            try {
+                connectivityManager =
+                    MyApplication.appContext!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val networkStateReceiver = object : BroadcastReceiver() {
+                    override fun onReceive(context: Context, intent: Intent) {
+                        try {
+                            checkConnection()
+                        } catch (ignore: Throwable) {
+                        }
+                    }
+                }
+                val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+                MyApplication.appContext!!.registerReceiver(networkStateReceiver, filter)
+                checkConnection()
+
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+
         lateinit var singleton: MyApplication
     }
 
+
+    var sp: PreferencesConfig? = null
+        get() {
+            if (field == null)
+                field = PreferencesConfig(appContext!!)
+
+            return field
+        }
+
     override fun onCreate() {
+        try {
+            appContext = applicationContext
+        } catch (ignore: Throwable) {
+        }
         super.onCreate()
 
+        if (appContext == null) {
+            appContext = applicationContext
+        }
+        applicationHandler = Handler(appContext!!.mainLooper)
+
+        Utilities.runOnUIThread(Runnable { MyApplication.startMessageService() })
+
         singleton = this
-
-        val sp = PreferencesConfig(this)
-        if (sp.isEnableNotification())
-            ServiceUtils.startService(this)
-
-        loginOrConnectFirebase()
-//        getBillOnFirebase()
-
     }
 
-    private fun loginOrConnectFirebase() {
-        val pass = MD5.md5("Bill#App")
-        val email = "billcontrol@app.com"
+    fun loginOrConnectFirebase(email: String, pass: String) {
+//        val pass = MD5.md5("Bill#App")
+//        val email = "billcontrol@app.com"
 
-        val auth = FirebaseConfiguration.getFirebaseAuth()
+        val auth = firebaseAuth()
         connectToFirebase(auth, email, pass)
-
-//        if (auth.currentUser == null) {
-//            createUserOnFirebase(auth, email, pass)
-//        } else {
-//            connectToFirebase(auth, email, pass)
-//        }
     }
 
-    private fun createUserOnFirebase(
+    fun firebaseAuth() = FirebaseConfiguration.getFirebaseAuth()
+
+
+    fun createUserOnFirebase(
         auth: FirebaseAuth,
-        email: String,
-        pass: String
+        obUser: ObUser,
+        callback: (Boolean) -> Unit
     ) {
-        auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
+        val passMd5 = MD5.md5(obUser.password)
+        auth.createUserWithEmailAndPassword(obUser.email, passMd5).addOnCompleteListener {
             if (it.isSuccessful) {
                 val id = it.result!!.user.uid
-                PreferencesConfig(this).setUserAuthId(id)
+                sp!!.setUserAuthId(id)
+                sp!!.setUserEmail(obUser.email)
+                sp!!.setUserPassword(obUser.password)
+
+                val user = obUser.toDto()
+                user.id = id
+                FirebaseDao.insert(user)
+                callback(true)
             } else {
                 val msg: String
                 try {
@@ -73,17 +164,27 @@ class MyApplication : Application() {
                     e.printStackTrace()
                 }
 
+                callback(false)
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-                connectToFirebase(auth, email, pass)
             }
         }
     }
 
-    private fun connectToFirebase(auth: FirebaseAuth, email: String, pass: String) {
-        auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
+    fun connectToFirebase(auth: FirebaseAuth, email: String, pass: String) {
+        connectToFirebase(auth, email, pass) {
+
+        }
+    }
+
+    fun connectToFirebase(auth: FirebaseAuth, email: String, pass: String, callback: (ObUser?) -> Unit) {
+        val passMd5 = MD5.md5(pass)
+        auth.signInWithEmailAndPassword(email, passMd5).addOnCompleteListener {
             if (it.isSuccessful) {
                 val id = it.result!!.user.uid
-                PreferencesConfig(this).setUserAuthId(id)
+                sp!!.setUserAuthId(id)
+                sp!!.setUserEmail(email)
+                sp!!.setUserPassword(pass)
+                callback(null)
             } else {
                 val msg: String
                 try {
@@ -97,7 +198,7 @@ class MyApplication : Application() {
                     e.printStackTrace()
                 }
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-                createUserOnFirebase(auth, email, pass)
+                callback(ObUser(null, "", email, pass))
             }
         }
     }
@@ -111,7 +212,7 @@ class MyApplication : Application() {
         reference
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
-                    BillBroadcast.notify(this@MyApplication, BillBroadcast.ACTION_DATABASE_CHANGE, null, null)
+                    BillBroadcast.notify(MyApplication.appContext!!, BillBroadcast.ACTION_DATABASE_CHANGE, null, null)
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
@@ -124,9 +225,11 @@ class MyApplication : Application() {
 
                     CacheObBils.set(bills)
 
-                    BillBroadcast.notify(this@MyApplication, BillBroadcast.ACTION_DATABASE_CHANGE, null, null)
+                    BillBroadcast.notify(MyApplication.appContext!!, BillBroadcast.ACTION_DATABASE_CHANGE, null, null)
                 }
             })
 
     }
+
+
 }

@@ -28,4 +28,10 @@
     <string name="copy_next_month">Copiar próximo mês</string>
     <string name="delete">Deletar</string>
     <string name="move_next_month">Mover para próximo mês</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Senha</string>
+    <string name="email_is_empty">E-mail está vazio</string>
+    <string name="password_is_empty">Senha está vazio</string>
+    <string name="login">Login</string>
+    <string name="name_empty">Nome está vazio</string>
 </resources>

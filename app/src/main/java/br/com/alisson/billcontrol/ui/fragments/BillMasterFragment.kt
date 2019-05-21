@@ -29,6 +29,7 @@ class BillMasterFragment : Fragment(), BroadcastInterfaceCallback {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_bill_master, container, false)
 
+        broadcast = BillBroadcast.register(activity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
         pageAdapter = view.findViewById(R.id.master_viewpager)
         return view
     }
@@ -40,7 +41,6 @@ class BillMasterFragment : Fragment(), BroadcastInterfaceCallback {
         masterKey = DateUtils.getCacheKey(cal.time.time)
         downloadFinished()
 
-        broadcast = BillBroadcast.register(activity!!, this, BillBroadcast.ACTION_DATABASE_CHANGE)
     }
 
     private fun setTitle() {
@@ -53,11 +53,15 @@ class BillMasterFragment : Fragment(), BroadcastInterfaceCallback {
     }
 
     override fun downloadFinished() {
-        adapter = BillPageAdapter(CacheObBils.getKeys(), childFragmentManager)
+        val keys = CacheObBils.getKeys()
+        adapter = BillPageAdapter(keys, childFragmentManager)
         pageAdapter.adapter = adapter
 
-        if (masterKey != null)
+        if (masterKey != null && keys.size > 0)
             pageAdapter.currentItem = adapter.list.indexOf(masterKey!!)
+
+        if (keys.size == 0)
+            setTitle()
 
         pageAdapter.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {}

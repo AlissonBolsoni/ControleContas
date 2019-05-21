@@ -4,5 +4,4 @@
     <style name="AppTheme" parent="@style/BaseAppTheme">
         <item name="android:titleTextColor">@color/colorPrimaryLight</item>
     </style>
-
 </resources>
